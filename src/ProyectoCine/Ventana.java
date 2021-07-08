@@ -169,9 +169,9 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
     }
 
     private JSpinner nAdulto, nInfantil;
-    private JComboBox boxPeliculas, boxFunciones , boxFormaPago;
+    private JComboBox boxPeliculas, boxFunciones, boxFormaPago;
     private JTextField txtDinero;
-    private JLabel adulto, infantil, pelicula, funcion, precioA, precioI, totalB, subtotal, 
+    private JLabel adulto, infantil, pelicula, funcion, precioA, precioI, totalB, subtotal,
             descuento, iva, granTotal, formaDePago, cambio;
     private JButton aceptar, limpiar, agregar_f, agregar_p, imprimir;
 
@@ -227,7 +227,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         nAdulto = new JSpinner();
         boletosPanel.add(nAdulto);
         nAdulto.setBounds(140, 80, 40, 20);
-        
+
         precioA = labelPersonalizado("Precio: $60");
         boletosPanel.add(precioA);
         precioA.setBounds(190, 80, 150, 20);
@@ -243,60 +243,62 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         precioI = labelPersonalizado("Precio: $40");
         boletosPanel.add(precioI);
         precioI.setBounds(190, 120, 150, 20);
-        
+
         totalB = labelPersonalizado("Total Boletos: 0");
         boletosPanel.add(totalB);
         totalB.setBounds(120, 150, 150, 20);
-        
+
         subtotal = labelPersonalizado("Subtotal: $ 0.00");
         boletosPanel.add(subtotal);
         subtotal.setBounds(40, 200, 150, 20);
-        
+
         descuento = labelPersonalizado("Descuento: $ 0.00");
         boletosPanel.add(descuento);
         descuento.setBounds(40, 230, 150, 20);
-        
+
         iva = labelPersonalizado("IVA 16%: $ 0.00");
         boletosPanel.add(iva);
         iva.setBounds(40, 260, 150, 20);
-        
+
         granTotal = labelPersonalizado("Total: $ 0.00");
         boletosPanel.add(granTotal);
         granTotal.setBounds(40, 290, 150, 20);
-        
+
         aceptar = new BotonPersonalizado("Aceptar");
         boletosPanel.add(aceptar);
+        aceptar.addActionListener(this);
         aceptar.setBounds(250, 210, 80, 30);
-        
+
         limpiar = new BotonPersonalizado("Limpiar");
         boletosPanel.add(limpiar);
+        limpiar.addActionListener(this);
         limpiar.setBounds(250, 260, 80, 30);
-        
+
         formaDePago = labelPersonalizado("Forma De Pago");
         boletosPanel.add(formaDePago);
         formaDePago.setBounds(30, 340, 150, 20);
-        
+
         boxFormaPago = new JComboBox();
         boxFormaPago.addItem("Efectivo");
         boxFormaPago.addItem("Tarjeta");
         boxFormaPago.addActionListener(this);
         boletosPanel.add(boxFormaPago);
         boxFormaPago.setBounds(150, 340, 100, 20);
-        
+
         txtDinero = new JTextField();
         boletosPanel.add(txtDinero);
         txtDinero.setBounds(260, 340, 100, 20);
-        
+
         imprimir = new BotonPersonalizado("Imprimir Ticket");
         boletosPanel.add(imprimir);
         imprimir.setBounds(120, 380, 150, 30);
-        
+
         cambio = labelPersonalizado("Cambio: $ 0.00");
-        cambio.setHorizontalAlignment(SwingConstants.CENTER);        
+        cambio.setHorizontalAlignment(SwingConstants.CENTER);
         cambio.setFont(new java.awt.Font(" ", Font.BOLD, 18));
         boletosPanel.add(cambio);
         cambio.setBounds(120, 370, 150, 150);
-        
+
         return boletosPanel;
     }
 
@@ -326,19 +328,262 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
             System.err.println("Buscar C");
         } else if (ae.getSource() == agregar_c) {
             System.err.println("Agregar C");
+            agregarClienteGUI();
         } else if (ae.getSource() == agregar_v) {
             System.err.println("Agregar V");
+            agregarVendedorGUI();
         } else if (ae.getSource() == agregar_f) {
             System.err.println("Agregar F");
+            agregarFuncionGUI();
         } else if (ae.getSource() == agregar_p) {
             System.err.println("Agregar p");
+            agregarPeliculaGUI();
         } else if (ae.getSource() == aceptar) {
             System.err.println("Aceptar");
         } else if (ae.getSource() == limpiar) {
             System.err.println("Limpiar");
         } else if (ae.getSource() == imprimir) {
             System.err.println("Imprimir");
+        } else if (ae.getSource() == agregarC) {
+            System.err.println("Agregar C");
+        } else if (ae.getSource() == agregarV) {
+            System.err.println("Agregar V");
+        } else if (ae.getSource() == agregarP) {
+            System.err.println("Agregar P");
+        } else if (ae.getSource() == agregarF) {
+            System.err.println("Agregar F");
         }
+    }
+
+    private JLabel nombreC, rfcC, correoC;
+    private JTextField txtnombreC, txtrfcC, txtcorreoC;
+    private JButton agregarC;
+    private JFrame ventanaAgCliente;
+
+    private void agregarClienteGUI() {
+        ventanaAgCliente = new JFrame();
+        ventanaAgCliente.setLayout(null);
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agregar.png"));
+        ventanaAgCliente.setIconImage(icon);
+        ventanaAgCliente.setTitle("Agregar Cliente");
+        setLocationRelativeTo(null);
+        ventanaAgCliente.setResizable(false);
+        ventanaAgCliente.setVisible(true);
+        ventanaAgCliente.setLocationRelativeTo(null);
+        ventanaAgCliente.setSize(400, 200);
+        ventanaAgCliente.setLayout(null);
+
+        JPanel panelDatos = new JPanel();
+        panelDatos.setLayout(null);
+        panelDatos.setBackground(new Color(10, 49, 64));
+
+        nombreC = labelPersonalizado("Nombre:");
+        panelDatos.add(nombreC);
+        nombreC.setBounds(10, 20, 70, 20);
+
+        txtnombreC = new JTextField();
+        panelDatos.add(txtnombreC);
+        txtnombreC.setBounds(100, 20, 250, 20);
+
+        rfcC = labelPersonalizado("RFC:");
+        panelDatos.add(rfcC);
+        rfcC.setBounds(10, 60, 70, 20);
+
+        txtrfcC = new JTextField();
+        panelDatos.add(txtrfcC);
+        txtrfcC.setBounds(100, 60, 250, 20);
+
+        correoC = labelPersonalizado("Correo:");
+        panelDatos.add(correoC);
+        correoC.setBounds(10, 100, 70, 20);
+
+        txtcorreoC = new JTextField();
+        panelDatos.add(txtcorreoC);
+        txtcorreoC.setBounds(100, 100, 250, 20);
+
+        agregarC = new BotonPersonalizado("Agregar");
+        panelDatos.add(agregarC);
+        agregarC.setBounds(160, 130, 80, 30);
+        agregarC.addActionListener(this);
+
+        ventanaAgCliente.add(panelDatos);
+        panelDatos.setBounds(0, 0, 400, 200);
+
+    }
+
+    private JLabel nombreV;
+    private JTextField txtnombreV;
+    private JButton agregarV;
+    private JFrame ventanaAgVendedor;
+
+    private void agregarVendedorGUI() {
+        ventanaAgVendedor = new JFrame();
+        ventanaAgVendedor.setLayout(null);
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agregar.png"));
+        ventanaAgVendedor.setIconImage(icon);
+        ventanaAgVendedor.setTitle("Agregar Vendedor");
+        setLocationRelativeTo(null);
+        ventanaAgVendedor.setResizable(false);
+        ventanaAgVendedor.setVisible(true);
+        ventanaAgVendedor.setLocationRelativeTo(null);
+        ventanaAgVendedor.setSize(400, 200);
+        ventanaAgVendedor.setLayout(null);
+
+        JPanel panelDatos = new JPanel();
+        panelDatos.setLayout(null);
+        panelDatos.setBackground(new Color(10, 49, 64));
+
+        nombreV = labelPersonalizado("Nombre:");
+        panelDatos.add(nombreV);
+        nombreV.setBounds(10, 60, 70, 20);
+
+        txtnombreV = new JTextField();
+        panelDatos.add(txtnombreV);
+        txtnombreV.setBounds(100, 60, 250, 20);
+
+        agregarV = new BotonPersonalizado("Agregar");
+        panelDatos.add(agregarV);
+        agregarV.setBounds(160, 100, 80, 30);
+        agregarV.addActionListener(this);
+
+        ventanaAgVendedor.add(panelDatos);
+        panelDatos.setBounds(0, 0, 400, 200);
+    }
+
+    private JLabel nombreP, idioma, clasificacion, duracion, genero;
+    private JTextField txtnombreP, txtidioma, txtclasificacion, txtduracion, txtgenero;
+    private JButton agregarP;
+    private JFrame ventanaAgPelicula;
+
+    private void agregarPeliculaGUI() {
+        ventanaAgPelicula = new JFrame();
+        ventanaAgPelicula.setLayout(null);
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agregar.png"));
+        ventanaAgPelicula.setIconImage(icon);
+        ventanaAgPelicula.setTitle("Agregar Pelicula");
+        setLocationRelativeTo(null);
+        ventanaAgPelicula.setResizable(false);
+        ventanaAgPelicula.setVisible(true);
+        ventanaAgPelicula.setLocationRelativeTo(null);
+        ventanaAgPelicula.setSize(400, 200);
+        ventanaAgPelicula.setLayout(null);
+
+        JPanel panelDatos = new JPanel();
+        panelDatos.setLayout(null);
+        panelDatos.setBackground(new Color(10, 49, 64));
+        
+        nombreP = labelPersonalizado("Nombre:");
+        panelDatos.add(nombreP);
+        nombreP.setBounds(10, 10, 70, 20);
+
+        txtnombreP = new JTextField();
+        panelDatos.add(txtnombreP);
+        txtnombreP.setBounds(70, 10, 320, 20);
+        
+        idioma = labelPersonalizado("Idioma:");
+        panelDatos.add(idioma);
+        idioma.setBounds(10, 50, 70, 20);
+
+        txtidioma = new JTextField();
+        panelDatos.add(txtidioma);
+        txtidioma.setBounds(70, 50, 100, 20);
+        
+        clasificacion = labelPersonalizado("Clasificacion:");
+        panelDatos.add(clasificacion);
+        clasificacion.setBounds(175, 50, 120, 20);
+
+        txtclasificacion = new JTextField();
+        panelDatos.add(txtclasificacion);
+        txtclasificacion.setBounds(270, 50, 120, 20);
+        
+        duracion = labelPersonalizado("Duracion(min):");
+        panelDatos.add(duracion);
+        duracion.setBounds(10, 90, 140, 20);
+
+        txtduracion = new JTextField();
+        panelDatos.add(txtduracion);
+        txtduracion.setBounds(115, 90, 100, 20);
+        
+        genero = labelPersonalizado("Genero:");
+        panelDatos.add(genero);
+        genero.setBounds(220, 90, 80, 20);
+
+        txtgenero = new JTextField();
+        panelDatos.add(txtgenero);
+        txtgenero.setBounds(280, 90, 110, 20);
+        
+        agregarP = new BotonPersonalizado("Agregar");
+        panelDatos.add(agregarP);
+        agregarP.setBounds(160, 130, 80, 30);
+        agregarP.addActionListener(this);
+
+        ventanaAgPelicula.add(panelDatos);
+        panelDatos.setBounds(0, 0, 400, 200);
+    }
+
+    private JLabel hora, cupo, sala, idPelicula;
+    private JTextField txthora, txtcupo, txtsala, txtidPelicula;
+    private JButton agregarF;
+    private JFrame ventanaAgFuncion;
+
+    private void agregarFuncionGUI() {
+        ventanaAgFuncion = new JFrame();
+        ventanaAgFuncion.setLayout(null);
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agregar.png"));
+        ventanaAgFuncion.setIconImage(icon);
+        ventanaAgFuncion.setTitle("Agregar Funcion");
+        setLocationRelativeTo(null);
+        ventanaAgFuncion.setResizable(false);
+        ventanaAgFuncion.setVisible(true);
+        ventanaAgFuncion.setLocationRelativeTo(null);
+        ventanaAgFuncion.setSize(400, 200);
+        ventanaAgFuncion.setLayout(null);
+
+        JPanel panelDatos = new JPanel();
+        panelDatos.setLayout(null);
+        panelDatos.setBackground(new Color(10, 49, 64));
+        
+        hora = labelPersonalizado("Hora:");
+        panelDatos.add(hora);
+        hora.setBounds(10, 20, 70, 20);
+
+        txthora = new JTextField();
+        panelDatos.add(txthora);
+        txthora.setBounds(70, 20, 40, 20);
+        
+        cupo = labelPersonalizado("cupo:");
+        panelDatos.add(cupo);
+        cupo.setBounds(130, 20, 70, 20);
+
+        txtcupo = new JTextField();
+        panelDatos.add(txtcupo);
+        txtcupo.setBounds(180, 20, 40, 20);
+        
+        sala = labelPersonalizado("Sala:");
+        panelDatos.add(sala);
+        sala.setBounds(240, 20, 70, 20);
+
+        txtsala = new JTextField();
+        panelDatos.add(txtsala);
+        txtsala.setBounds(280, 20, 40, 20);
+        
+        idPelicula = labelPersonalizado("Pelicula:");
+        panelDatos.add(idPelicula);
+        idPelicula.setBounds(10, 80, 70, 20);
+
+        txtidPelicula = new JTextField();
+        panelDatos.add(txtidPelicula);
+        txtidPelicula.setBounds(80, 80, 250, 20);
+        
+        agregarF = new BotonPersonalizado("Agregar");
+        panelDatos.add(agregarF);
+        agregarF.setBounds(160, 130, 80, 30);
+        agregarF.addActionListener(this);
+
+        ventanaAgFuncion.add(panelDatos);
+        panelDatos.setBounds(0, 0, 400, 200);
+        
+        
     }
 
     @Override
