@@ -15,18 +15,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 /**
@@ -45,6 +49,8 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
     private JButton login;
 
     public void loginGUI() {
+        actualizaDatos();
+        actualizaComboBox();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Container ventana = getContentPane();
         ventana.setLayout(null);
@@ -83,11 +89,11 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         login.addActionListener(this);
     }
 
-    private JLabel boletos, titulo, cliente, nombre_c, rfc_c, vendedor, fecha;
+    private JLabel boletos, titulo, cliente, nombre_c, rfc_c, vendedor, fecha, promos;
     private JTextField txtCliente;
     private JComboBox boxVendedor;
     private JButton buscar_c, agregar_c, agregar_v;
-    private JPanel jpBoletos;
+    private JPanel jpBoletos, jpPromos;
 
     public void ventasGUI() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -131,9 +137,9 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         vendedor.setBounds(450, 60, 80, 20);
 
         /* realizar el codigo para que los datos los lea desde la BD*/
-        boxVendedor = new JComboBox();
+        /*boxVendedor = new JComboBox();
         boxVendedor.addItem("Ricardo");
-        boxVendedor.addItem("Carlos");
+        boxVendedor.addItem("Carlos");*/
         boxVendedor.addActionListener(this);
         ventana2.add(boxVendedor);
         boxVendedor.setBounds(530, 60, 140, 20);
@@ -151,10 +157,12 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
 
         nombre_c = labelPersonalizado("Cliente: Público En General");
         ventana2.add(nombre_c);
+        nombre_c.setFont(new java.awt.Font("BankGothic Lt BT", Font.BOLD, 18));
         nombre_c.setBounds(100, 110, 250, 20);
 
         rfc_c = labelPersonalizado("RFC: XAXX010101000");
         ventana2.add(rfc_c);
+        rfc_c.setFont(new java.awt.Font("BankGothic Lt BT", Font.BOLD, 18));
         rfc_c.setBounds(400, 110, 200, 20);
 
         jpBoletos = panelVentaBoletos();
@@ -166,6 +174,16 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         boletos.setFont(new java.awt.Font("BankGothic Lt BT", Font.BOLD, 22));
         boletos.setForeground(Color.WHITE);
         boletos.setBounds(200, 150, 80, 50);
+
+        jpPromos = panelPromos();
+        ventana2.add(jpPromos);
+        jpPromos.setBounds(540, 200, 400, 500);
+
+        promos = new JLabel("Próximos Estrenos");
+        ventana2.add(promos);
+        promos.setFont(new java.awt.Font("BankGothic Lt BT", Font.BOLD, 22));
+        promos.setForeground(Color.WHITE);
+        promos.setBounds(650, 150, 300, 50);
     }
 
     private JSpinner nAdulto, nInfantil;
@@ -174,6 +192,8 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
     private JLabel adulto, infantil, pelicula, funcion, precioA, precioI, totalB, subtotal,
             descuento, iva, granTotal, formaDePago, cambio;
     private JButton aceptar, limpiar, agregar_f, agregar_p, imprimir;
+    private final int PRECIO_ADULDO = 60, PRECIO_INFANTIL = 40;
+    private double dTotal = 0;
 
     private JPanel panelVentaBoletos() {
         JPanel boletosPanel = new JPanel();
@@ -191,9 +211,9 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         pelicula.setBounds(10, 10, 70, 20);
 
         /* realizar el codigo para que los datos los lea desde la BD*/
-        boxPeliculas = new JComboBox();
+        /*boxPeliculas = new JComboBox();
         boxPeliculas.addItem("pelicula 1");
-        boxPeliculas.addItem("pelicula 2");
+        boxPeliculas.addItem("pelicula 2");*/
         boxPeliculas.addActionListener(this);
         boletosPanel.add(boxPeliculas);
         boxPeliculas.setBounds(80, 10, 250, 20);
@@ -208,9 +228,9 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         funcion.setBounds(10, 40, 70, 20);
 
         /* realizar el codigo para que los datos los lea desde la BD*/
-        boxFunciones = new JComboBox();
+        /*boxFunciones = new JComboBox();
         boxFunciones.addItem("11:00 am");
-        boxFunciones.addItem("12:00 pm");
+        boxFunciones.addItem("12:00 pm");*/
         boxFunciones.addActionListener(this);
         boletosPanel.add(boxFunciones);
         boxFunciones.setBounds(80, 40, 100, 20);
@@ -224,7 +244,8 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         boletosPanel.add(adulto);
         adulto.setBounds(80, 80, 70, 20);
 
-        nAdulto = new JSpinner();
+        SpinnerNumberModel snm0 = new SpinnerNumberModel(0, 0, 10, 1);
+        nAdulto = new JSpinner(snm0);
         boletosPanel.add(nAdulto);
         nAdulto.setBounds(140, 80, 40, 20);
 
@@ -236,7 +257,8 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         boletosPanel.add(infantil);
         infantil.setBounds(80, 120, 70, 20);
 
-        nInfantil = new JSpinner();
+        SpinnerNumberModel snm1 = new SpinnerNumberModel(0, 0, 10, 1);
+        nInfantil = new JSpinner(snm1);
         boletosPanel.add(nInfantil);
         nInfantil.setBounds(140, 120, 40, 20);
 
@@ -287,10 +309,12 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
 
         txtDinero = new JTextField();
         boletosPanel.add(txtDinero);
+        txtDinero.setText("0.00");
         txtDinero.setBounds(260, 340, 100, 20);
 
         imprimir = new BotonPersonalizado("Imprimir Ticket");
         boletosPanel.add(imprimir);
+        imprimir.addActionListener(this);
         imprimir.setBounds(120, 380, 150, 30);
 
         cambio = labelPersonalizado("Cambio: $ 0.00");
@@ -300,6 +324,26 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         cambio.setBounds(120, 370, 150, 150);
 
         return boletosPanel;
+    }
+
+    private JPanel panelPromos() {
+        JPanel promosPanel = new JPanel();
+        promosPanel.setLayout(null);
+        promosPanel.setBackground(new Color(39, 110, 144));
+        promosPanel.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(Color.WHITE, 3),
+                        BorderFactory.createEmptyBorder(0, 0, 0, 0)
+                )
+        );
+
+        HilosGUI hilo = new HilosGUI();
+        JLabel cartel = new JLabel();
+        promosPanel.add(cartel);
+        hilo.recibeJLabel(cartel);
+        hilo.start();
+        cartel.setBounds(2, 2, 396, 496);
+        return promosPanel;
     }
 
     private JButton botonTransparente(String ruta) {
@@ -339,10 +383,36 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
             System.err.println("Agregar p");
             agregarPeliculaGUI();
         } else if (ae.getSource() == aceptar) {
+            int tInfatil = (PRECIO_INFANTIL * ((int) nInfantil.getValue()));
+            int tAdulto = (PRECIO_ADULDO * ((int) nAdulto.getValue()));
+            int totalBoletos = ((int) nInfantil.getValue()) + ((int) nAdulto.getValue());
+            double dSubtotal = (tInfatil + tAdulto) / 1.16;
+            double dIVA = dSubtotal * 0.16;
+            dTotal = dIVA + dSubtotal;
+            totalB.setText("Total Boletos: " + totalBoletos);
+            subtotal.setText(String.format("Subtotal: $ %1.2f", dSubtotal));
+            descuento.setText("Descuento: $ 0.00");
+            iva.setText("IVA 16%: " + String.format("$ %1.2f", dIVA));
+            granTotal.setText(String.format("Total: $ %1.2f", dTotal));
             System.err.println("Aceptar");
         } else if (ae.getSource() == limpiar) {
+            nAdulto.setValue(0);
+            nInfantil.setValue(0);
+            totalB.setText("Total Boletos: 0");
+            subtotal.setText("Subtotal: $ 0.00");
+            descuento.setText("Descuento: $ 0.00");
+            iva.setText("IVA 16%: $ 0.00");
+            granTotal.setText("Total: $ 0.00");
+            cambio.setText("Cambio: $ 0.00");
+            txtDinero.setText("");
             System.err.println("Limpiar");
         } else if (ae.getSource() == imprimir) {
+            if ("0.00".equals(txtDinero.getText())) {
+                JOptionPane.showMessageDialog(null, "Ingresa la cantidad de Efectivo");
+            } else {
+                double dCambio = Double.parseDouble(txtDinero.getText()) - dTotal;
+                cambio.setText(String.format("Cambio: $ %1.2f", dCambio));
+            }
             System.err.println("Imprimir");
         } else if (ae.getSource() == agregarC) {
             System.err.println("Agregar C");
@@ -352,6 +422,15 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
             System.err.println("Agregar P");
         } else if (ae.getSource() == agregarF) {
             System.err.println("Agregar F");
+        } else if (ae.getSource() == boxFormaPago) {
+            int opcion = boxFormaPago.getSelectedIndex();
+            if (opcion == 1) {
+                txtDinero.setText("" + String.format("%1.2f", dTotal));
+                System.err.println("Pago Tarjeta");
+            } else if (opcion == 0) {
+                txtDinero.setText("0.00");
+                System.err.println("Efectivo");
+            }
         }
     }
 
@@ -366,7 +445,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agregar.png"));
         ventanaAgCliente.setIconImage(icon);
         ventanaAgCliente.setTitle("Agregar Cliente");
-        setLocationRelativeTo(null);
+        ventanaAgCliente.setLocationRelativeTo(null);
         ventanaAgCliente.setResizable(false);
         ventanaAgCliente.setVisible(true);
         ventanaAgCliente.setLocationRelativeTo(null);
@@ -422,7 +501,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agregar.png"));
         ventanaAgVendedor.setIconImage(icon);
         ventanaAgVendedor.setTitle("Agregar Vendedor");
-        setLocationRelativeTo(null);
+        ventanaAgVendedor.setLocationRelativeTo(null);
         ventanaAgVendedor.setResizable(false);
         ventanaAgVendedor.setVisible(true);
         ventanaAgVendedor.setLocationRelativeTo(null);
@@ -461,7 +540,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agregar.png"));
         ventanaAgPelicula.setIconImage(icon);
         ventanaAgPelicula.setTitle("Agregar Pelicula");
-        setLocationRelativeTo(null);
+        ventanaAgPelicula.setLocationRelativeTo(null);
         ventanaAgPelicula.setResizable(false);
         ventanaAgPelicula.setVisible(true);
         ventanaAgPelicula.setLocationRelativeTo(null);
@@ -471,7 +550,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         JPanel panelDatos = new JPanel();
         panelDatos.setLayout(null);
         panelDatos.setBackground(new Color(10, 49, 64));
-        
+
         nombreP = labelPersonalizado("Nombre:");
         panelDatos.add(nombreP);
         nombreP.setBounds(10, 10, 70, 20);
@@ -479,7 +558,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txtnombreP = new JTextField();
         panelDatos.add(txtnombreP);
         txtnombreP.setBounds(70, 10, 320, 20);
-        
+
         idioma = labelPersonalizado("Idioma:");
         panelDatos.add(idioma);
         idioma.setBounds(10, 50, 70, 20);
@@ -487,7 +566,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txtidioma = new JTextField();
         panelDatos.add(txtidioma);
         txtidioma.setBounds(70, 50, 100, 20);
-        
+
         clasificacion = labelPersonalizado("Clasificacion:");
         panelDatos.add(clasificacion);
         clasificacion.setBounds(175, 50, 120, 20);
@@ -495,7 +574,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txtclasificacion = new JTextField();
         panelDatos.add(txtclasificacion);
         txtclasificacion.setBounds(270, 50, 120, 20);
-        
+
         duracion = labelPersonalizado("Duracion(min):");
         panelDatos.add(duracion);
         duracion.setBounds(10, 90, 140, 20);
@@ -503,7 +582,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txtduracion = new JTextField();
         panelDatos.add(txtduracion);
         txtduracion.setBounds(115, 90, 100, 20);
-        
+
         genero = labelPersonalizado("Genero:");
         panelDatos.add(genero);
         genero.setBounds(220, 90, 80, 20);
@@ -511,7 +590,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txtgenero = new JTextField();
         panelDatos.add(txtgenero);
         txtgenero.setBounds(280, 90, 110, 20);
-        
+
         agregarP = new BotonPersonalizado("Agregar");
         panelDatos.add(agregarP);
         agregarP.setBounds(160, 130, 80, 30);
@@ -532,7 +611,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/agregar.png"));
         ventanaAgFuncion.setIconImage(icon);
         ventanaAgFuncion.setTitle("Agregar Funcion");
-        setLocationRelativeTo(null);
+        ventanaAgFuncion.setLocationRelativeTo(null);
         ventanaAgFuncion.setResizable(false);
         ventanaAgFuncion.setVisible(true);
         ventanaAgFuncion.setLocationRelativeTo(null);
@@ -542,7 +621,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         JPanel panelDatos = new JPanel();
         panelDatos.setLayout(null);
         panelDatos.setBackground(new Color(10, 49, 64));
-        
+
         hora = labelPersonalizado("Hora:");
         panelDatos.add(hora);
         hora.setBounds(10, 20, 70, 20);
@@ -550,7 +629,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txthora = new JTextField();
         panelDatos.add(txthora);
         txthora.setBounds(70, 20, 40, 20);
-        
+
         cupo = labelPersonalizado("cupo:");
         panelDatos.add(cupo);
         cupo.setBounds(130, 20, 70, 20);
@@ -558,7 +637,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txtcupo = new JTextField();
         panelDatos.add(txtcupo);
         txtcupo.setBounds(180, 20, 40, 20);
-        
+
         sala = labelPersonalizado("Sala:");
         panelDatos.add(sala);
         sala.setBounds(240, 20, 70, 20);
@@ -566,7 +645,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txtsala = new JTextField();
         panelDatos.add(txtsala);
         txtsala.setBounds(280, 20, 40, 20);
-        
+
         idPelicula = labelPersonalizado("Pelicula:");
         panelDatos.add(idPelicula);
         idPelicula.setBounds(10, 80, 70, 20);
@@ -574,7 +653,7 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
         txtidPelicula = new JTextField();
         panelDatos.add(txtidPelicula);
         txtidPelicula.setBounds(80, 80, 250, 20);
-        
+
         agregarF = new BotonPersonalizado("Agregar");
         panelDatos.add(agregarF);
         agregarF.setBounds(160, 130, 80, 30);
@@ -582,10 +661,50 @@ public class Ventana extends JFrame implements ActionListener, ItemListener {
 
         ventanaAgFuncion.add(panelDatos);
         panelDatos.setBounds(0, 0, 400, 200);
-        
-        
+
+    }
+    
+    private Vector<Object[]> listClientes, listPeliculas, listFunciones, listVendedores;
+    private ManejoDatos manejoDatos = new ManejoDatos();
+    
+    public void actualizaDatos(){
+        String consultaCliente = "SELECT * FROM ROOT.CLIENTE";
+        String consultaPelicula = "SELECT * FROM ROOT.PELICULA";
+        String consultaFuncion = "SELECT * FROM ROOT.FUNCION";
+        String consultaVendedor = "SELECT * FROM ROOT.VENDEDOR";
+        listClientes = manejoDatos.conexionConsultaCliente(consultaCliente);
+        listPeliculas = manejoDatos.conexionConsultaPelicula(consultaPelicula);
+        listFunciones = manejoDatos.conexionConsultaFuncion(consultaFuncion);
+        listVendedores = manejoDatos.conexionConsultaVendedor(consultaVendedor);
     }
 
+    
+    public void actualizaComboBox(){
+        actualizaDatos();
+        Vector<String> vecPeliculas = new Vector<>();
+        for (int i = 0; i < listPeliculas.size(); i++) {
+            String str = (String) listPeliculas.get(i)[1];
+            vecPeliculas.add(str);
+        }
+        
+        
+        Vector<String> vecFunciones = new Vector<>();
+        for (int i = 0; i < listFunciones.size(); i++) {
+            String str = (String) listFunciones.get(i)[1];
+            vecFunciones.add(str);
+        }
+        
+        Vector<String> vecVendedores = new Vector<>();
+        for (int i = 0; i < listVendedores.size(); i++) {
+            String str = (String) listVendedores.get(i)[1];
+            vecVendedores.add(str);
+        }
+        
+        boxPeliculas = new JComboBox(vecPeliculas);
+        boxFunciones = new JComboBox(vecFunciones);
+        boxVendedor = new JComboBox(vecVendedores);
+    }
+    
     @Override
     public void itemStateChanged(ItemEvent ie) {
 
